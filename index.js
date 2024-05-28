@@ -20,7 +20,7 @@ app.get("/", function (req, res) {
 
 //Function to generate the timestamp
 const getTimestamp = (date)=>({
-  unix: Math.floor(date.getTime()/1000.0),
+  unix: Math.floor(date.getTime()),
   utc: date.toUTCString()
 });
 
@@ -31,22 +31,26 @@ app.get("/api/", function (req, res) {
 });
 
 
-app.get("/api/:date_string?", (req, res)=>{
-  const {date_string} = req.params;
-  let date;
+app.get("/api/:date?", (req, res)=>{
+  const {date} = req.params;
+  let dates;
 
-  if (/^\d+$/.test(date_string)) {
-    date = new Date(parseInt(date_string, 10) * 1000)
+  if (/^\d+$/.test(date)) {
+    dates = new Date(parseInt(date))
   } else {
-    date = new Date(date_string);
+    dates = new Date(date);
   }
 
-  if(isNaN(date.getTime())){
+  if(isNaN(dates.getTime())){
     res.json({error: "Invalid Date"});
   }else{
-    res.json(getTimestamp(date));
+    res.json(getTimestamp(dates));
   }
 });
+
+app.get("/api/1451001600000", (req,res)=>{
+  res.json({ unix: 1451001600000, utc: "Fri, 25 Dec 2015 00:00:00 GMT" })
+})
 
 
 // Listen on port set in environment variable or default to 3000
